@@ -48,17 +48,19 @@ if __name__ == "__main__":
     #Store merged data to a new sheet in the same Google spreadsheet workbook.
     #column definition creation
     print datetime.datetime.now(), ' Populating column headers'
-    while inc <= len(colname):
-        worksheet.update_cell(sheetrow,inc,colname[inc-1])
-        inc=inc+1
+    col_value = colname
+    col_list = worksheet.range('A1:M1')
+    for i, val in enumerate(col_value):
+        col_list[i].value = val
+    worksheet.update_cells(col_list)
 
     #row population
     print datetime.datetime.now(), ' Storing data to the new worksheet'
-    for sublists in datasheet:
+    for n, sublists in enumerate(datasheet):
         for qrow in query_result:
             if str(qrow[0]) == str(sublists[3]) and str(qrow[1]) == str(sublists[11]):
-                print ("%s Shipment number in Leak Tracker found in Fact Layer.   (BOL --- %s)  #####  (ChargeCode --- %s)"\
-                       % (datetime.datetime.now(),sublists[3],sublists[11]))
+                print ("%s Found (BOL --- %s)  #####  (ChargeCode --- %s)"\
+                       % (str(round((float(n)/float(len(datasheet)))*100,2)) +'% Complete',sublists[3],sublists[11]))
                 sheetrow = sheetrow+1
                 cell_values = qrow +[sublists[1]] +[sublists[2]]
                 cell_list = worksheet.range('A'+str(sheetrow)+':M'+str(sheetrow))
